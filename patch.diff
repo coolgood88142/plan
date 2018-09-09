@@ -1,0 +1,1330 @@
+diff --git a/plan/activity.php b/plan/activity.php
+index 44f4d7a..89af49a 100644
+--- a/plan/activity.php
++++ b/plan/activity.php
+@@ -7,517 +7,272 @@
+ <!-- DataTables v1.10.16 -->
+ <link href="jquery.dataTables.min.css" rel="stylesheet" />
+ <script src="jquery.dataTables.min.js"></script>
+-<?php session_start(); ?>
+-<?php include("mysql.php"); ?>
+-  <body>
++<?php session_start();
++    include("mysql.php"); 
++
++    $us_admin = $_SESSION['us_admin'];
++    if(!empty($us_admin)){
++        include("select_activity.php"); 
++    }
+ 
+-  
++ ?>
++  <body>
+     <form name="showForm" method="post">
+-        <input type="button" value="活動行程" onClick="show('activity')"/>
+-        <input type="button" value="行程規劃" onClick="show('plan')"/>
++        <input type="hidden" name="admin" value="<?=$us_admin?>"/>
++        <input type="button" value="活動列表" onClick="show('activity')"/>
++        <input type="button" value="行程列表" onClick="show('plan')"/>
+         <input type="button" value="設定" onClick="show('setting')"/>
+         &nbsp&nbsp
+-        Hi!<?php echo $_SESSION['us_name'];
+-        echo $_SESSION['us_account'];?>
++        Hi!<?php echo $_SESSION['us_name'];?>
+         <input type="button" value="登出" onClick="show('sign_out')"/>
+         <br/><br/>
+-
+-        <!-- <table  width="600" hight="300" >
+-            <tr>
+-                <td bgcolor="#00FFFF">活動行程</td>
+-                <td bgcolor="#00FFFF">類型</td>
+-                <td bgcolor="#00FFFF">時間(小時)</td>
+-                <td bgcolor="#00FFFF">花費</td>
+-                <td bgcolor="#00FFFF">動作</td>
+-            </tr>
+-            <tr>
+-            </tr>
+-        </table> -->
++        <H2>活動列表</H2>
++        <br/><br/>
++        <input type="button" style="display:none;" name="add" value="新增活動項目" onClick="add_activity()"/>
+         <table id="example">
+ 	<thead>
+-  <tr>
+-                <td bgcolor="#00FFFF">活動行程</td>
+-                <td bgcolor="#00FFFF">類型</td>
+-                <td bgcolor="#00FFFF">時間(小時)</td>
+-                <td bgcolor="#00FFFF">花費</td>
+-                <td bgcolor="#00FFFF">動作</td>
+-                <td bgcolor="#00FFFF">動作</td>
+-            </tr>
++        <tr>
++            <td bgcolor="#00FFFF">活動項目</td>
++            <td bgcolor="#00FFFF" style="display:none;">活動項目ID</td>
++            <td bgcolor="#00FFFF">類型</td>
++            <td bgcolor="#00FFFF" style="display:none;">類型ID</td>
++            <td bgcolor="#00FFFF">天氣</td>
++            <td bgcolor="#00FFFF">車程(小時)</td>
++            <td bgcolor="#00FFFF">攜帶物品</td>
++            <td bgcolor="#00FFFF">花費</td>
++            <td bgcolor="#00FFFF">時間(小時)</td>
++            <?php
++                if($us_admin=='Y'){                
++            ?>
++                <td bgcolor="#00FFFF">編輯設定</td>
++            <?php
++                }
++            ?>
++        </tr>
+ 	</thead>
+ 	<tbody>
+-  <tr>
+-                <td>Tiger Nixon</td>
+-                <td>System Architect</td>
+-                <td>Edinburgh</td>
+-                <td>61</td>
+-                <td>2011/04/25</td>
+-                <td>$320,800</td>
+-            </tr>
+-            <tr>
+-                <td>Garrett Winters</td>
+-                <td>Accountant</td>
+-                <td>Tokyo</td>
+-                <td>63</td>
+-                <td>2011/07/25</td>
+-                <td>$170,750</td>
+-            </tr>
+-            <tr>
+-                <td>Ashton Cox</td>
+-                <td>Junior Technical Author</td>
+-                <td>San Francisco</td>
+-                <td>66</td>
+-                <td>2009/01/12</td>
+-                <td>$86,000</td>
+-            </tr>
+-            <tr>
+-                <td>Cedric Kelly</td>
+-                <td>Senior Javascript Developer</td>
+-                <td>Edinburgh</td>
+-                <td>22</td>
+-                <td>2012/03/29</td>
+-                <td>$433,060</td>
+-            </tr>
+-            <tr>
+-                <td>Airi Satou</td>
+-                <td>Accountant</td>
+-                <td>Tokyo</td>
+-                <td>33</td>
+-                <td>2008/11/28</td>
+-                <td>$162,700</td>
+-            </tr>
+-            <tr>
+-                <td>Brielle Williamson</td>
+-                <td>Integration Specialist</td>
+-                <td>New York</td>
+-                <td>61</td>
+-                <td>2012/12/02</td>
+-                <td>$372,000</td>
+-            </tr>
+-            <tr>
+-                <td>Herrod Chandler</td>
+-                <td>Sales Assistant</td>
+-                <td>San Francisco</td>
+-                <td>59</td>
+-                <td>2012/08/06</td>
+-                <td>$137,500</td>
+-            </tr>
+-            <tr>
+-                <td>Rhona Davidson</td>
+-                <td>Integration Specialist</td>
+-                <td>Tokyo</td>
+-                <td>55</td>
+-                <td>2010/10/14</td>
+-                <td>$327,900</td>
+-            </tr>
+-            <tr>
+-                <td>Colleen Hurst</td>
+-                <td>Javascript Developer</td>
+-                <td>San Francisco</td>
+-                <td>39</td>
+-                <td>2009/09/15</td>
+-                <td>$205,500</td>
+-            </tr>
+-            <tr>
+-                <td>Sonya Frost</td>
+-                <td>Software Engineer</td>
+-                <td>Edinburgh</td>
+-                <td>23</td>
+-                <td>2008/12/13</td>
+-                <td>$103,600</td>
+-            </tr>
+-            <tr>
+-                <td>Jena Gaines</td>
+-                <td>Office Manager</td>
+-                <td>London</td>
+-                <td>30</td>
+-                <td>2008/12/19</td>
+-                <td>$90,560</td>
+-            </tr>
+-            <tr>
+-                <td>Quinn Flynn</td>
+-                <td>Support Lead</td>
+-                <td>Edinburgh</td>
+-                <td>22</td>
+-                <td>2013/03/03</td>
+-                <td>$342,000</td>
+-            </tr>
+-            <tr>
+-                <td>Charde Marshall</td>
+-                <td>Regional Director</td>
+-                <td>San Francisco</td>
+-                <td>36</td>
+-                <td>2008/10/16</td>
+-                <td>$470,600</td>
+-            </tr>
+-            <tr>
+-                <td>Haley Kennedy</td>
+-                <td>Senior Marketing Designer</td>
+-                <td>London</td>
+-                <td>43</td>
+-                <td>2012/12/18</td>
+-                <td>$313,500</td>
+-            </tr>
+-            <tr>
+-                <td>Tatyana Fitzpatrick</td>
+-                <td>Regional Director</td>
+-                <td>London</td>
+-                <td>19</td>
+-                <td>2010/03/17</td>
+-                <td>$385,750</td>
+-            </tr>
+-            <tr>
+-                <td>Michael Silva</td>
+-                <td>Marketing Designer</td>
+-                <td>London</td>
+-                <td>66</td>
+-                <td>2012/11/27</td>
+-                <td>$198,500</td>
+-            </tr>
+-            <tr>
+-                <td>Paul Byrd</td>
+-                <td>Chief Financial Officer (CFO)</td>
+-                <td>New York</td>
+-                <td>64</td>
+-                <td>2010/06/09</td>
+-                <td>$725,000</td>
+-            </tr>
+-            <tr>
+-                <td>Gloria Little</td>
+-                <td>Systems Administrator</td>
+-                <td>New York</td>
+-                <td>59</td>
+-                <td>2009/04/10</td>
+-                <td>$237,500</td>
+-            </tr>
+-            <tr>
+-                <td>Bradley Greer</td>
+-                <td>Software Engineer</td>
+-                <td>London</td>
+-                <td>41</td>
+-                <td>2012/10/13</td>
+-                <td>$132,000</td>
+-            </tr>
+-            <tr>
+-                <td>Dai Rios</td>
+-                <td>Personnel Lead</td>
+-                <td>Edinburgh</td>
+-                <td>35</td>
+-                <td>2012/09/26</td>
+-                <td>$217,500</td>
+-            </tr>
+-            <tr>
+-                <td>Jenette Caldwell</td>
+-                <td>Development Lead</td>
+-                <td>New York</td>
+-                <td>30</td>
+-                <td>2011/09/03</td>
+-                <td>$345,000</td>
+-            </tr>
+-            <tr>
+-                <td>Yuri Berry</td>
+-                <td>Chief Marketing Officer (CMO)</td>
+-                <td>New York</td>
+-                <td>40</td>
+-                <td>2009/06/25</td>
+-                <td>$675,000</td>
+-            </tr>
+-            <tr>
+-                <td>Caesar Vance</td>
+-                <td>Pre-Sales Support</td>
+-                <td>New York</td>
+-                <td>21</td>
+-                <td>2011/12/12</td>
+-                <td>$106,450</td>
+-            </tr>
+-            <tr>
+-                <td>Doris Wilder</td>
+-                <td>Sales Assistant</td>
+-                <td>Sidney</td>
+-                <td>23</td>
+-                <td>2010/09/20</td>
+-                <td>$85,600</td>
+-            </tr>
+-            <tr>
+-                <td>Angelica Ramos</td>
+-                <td>Chief Executive Officer (CEO)</td>
+-                <td>London</td>
+-                <td>47</td>
+-                <td>2009/10/09</td>
+-                <td>$1,200,000</td>
+-            </tr>
+-            <tr>
+-                <td>Gavin Joyce</td>
+-                <td>Developer</td>
+-                <td>Edinburgh</td>
+-                <td>42</td>
+-                <td>2010/12/22</td>
+-                <td>$92,575</td>
+-            </tr>
+-            <tr>
+-                <td>Jennifer Chang</td>
+-                <td>Regional Director</td>
+-                <td>Singapore</td>
+-                <td>28</td>
+-                <td>2010/11/14</td>
+-                <td>$357,650</td>
+-            </tr>
+-            <tr>
+-                <td>Brenden Wagner</td>
+-                <td>Software Engineer</td>
+-                <td>San Francisco</td>
+-                <td>28</td>
+-                <td>2011/06/07</td>
+-                <td>$206,850</td>
+-            </tr>
+-            <tr>
+-                <td>Fiona Green</td>
+-                <td>Chief Operating Officer (COO)</td>
+-                <td>San Francisco</td>
+-                <td>48</td>
+-                <td>2010/03/11</td>
+-                <td>$850,000</td>
+-            </tr>
+-            <tr>
+-                <td>Shou Itou</td>
+-                <td>Regional Marketing</td>
+-                <td>Tokyo</td>
+-                <td>20</td>
+-                <td>2011/08/14</td>
+-                <td>$163,000</td>
+-            </tr>
+-            <tr>
+-                <td>Michelle House</td>
+-                <td>Integration Specialist</td>
+-                <td>Sidney</td>
+-                <td>37</td>
+-                <td>2011/06/02</td>
+-                <td>$95,400</td>
+-            </tr>
+-            <tr>
+-                <td>Suki Burks</td>
+-                <td>Developer</td>
+-                <td>London</td>
+-                <td>53</td>
+-                <td>2009/10/22</td>
+-                <td>$114,500</td>
+-            </tr>
+-            <tr>
+-                <td>Prescott Bartlett</td>
+-                <td>Technical Author</td>
+-                <td>London</td>
+-                <td>27</td>
+-                <td>2011/05/07</td>
+-                <td>$145,000</td>
+-            </tr>
+-            <tr>
+-                <td>Gavin Cortez</td>
+-                <td>Team Leader</td>
+-                <td>San Francisco</td>
+-                <td>22</td>
+-                <td>2008/10/26</td>
+-                <td>$235,500</td>
+-            </tr>
+-            <tr>
+-                <td>Martena Mccray</td>
+-                <td>Post-Sales support</td>
+-                <td>Edinburgh</td>
+-                <td>46</td>
+-                <td>2011/03/09</td>
+-                <td>$324,050</td>
+-            </tr>
+-            <tr>
+-                <td>Unity Butler</td>
+-                <td>Marketing Designer</td>
+-                <td>San Francisco</td>
+-                <td>47</td>
+-                <td>2009/12/09</td>
+-                <td>$85,675</td>
+-            </tr>
+-            <tr>
+-                <td>Howard Hatfield</td>
+-                <td>Office Manager</td>
+-                <td>San Francisco</td>
+-                <td>51</td>
+-                <td>2008/12/16</td>
+-                <td>$164,500</td>
+-            </tr>
+-            <tr>
+-                <td>Hope Fuentes</td>
+-                <td>Secretary</td>
+-                <td>San Francisco</td>
+-                <td>41</td>
+-                <td>2010/02/12</td>
+-                <td>$109,850</td>
+-            </tr>
+-            <tr>
+-                <td>Vivian Harrell</td>
+-                <td>Financial Controller</td>
+-                <td>San Francisco</td>
+-                <td>62</td>
+-                <td>2009/02/14</td>
+-                <td>$452,500</td>
+-            </tr>
+-            <tr>
+-                <td>Timothy Mooney</td>
+-                <td>Office Manager</td>
+-                <td>London</td>
+-                <td>37</td>
+-                <td>2008/12/11</td>
+-                <td>$136,200</td>
+-            </tr>
+-            <tr>
+-                <td>Jackson Bradshaw</td>
+-                <td>Director</td>
+-                <td>New York</td>
+-                <td>65</td>
+-                <td>2008/09/26</td>
+-                <td>$645,750</td>
+-            </tr>
+-            <tr>
+-                <td>Olivia Liang</td>
+-                <td>Support Engineer</td>
+-                <td>Singapore</td>
+-                <td>64</td>
+-                <td>2011/02/03</td>
+-                <td>$234,500</td>
+-            </tr>
+-            <tr>
+-                <td>Bruno Nash</td>
+-                <td>Software Engineer</td>
+-                <td>London</td>
+-                <td>38</td>
+-                <td>2011/05/03</td>
+-                <td>$163,500</td>
+-            </tr>
+-            <tr>
+-                <td>Sakura Yamamoto</td>
+-                <td>Support Engineer</td>
+-                <td>Tokyo</td>
+-                <td>37</td>
+-                <td>2009/08/19</td>
+-                <td>$139,575</td>
+-            </tr>
+-            <tr>
+-                <td>Thor Walton</td>
+-                <td>Developer</td>
+-                <td>New York</td>
+-                <td>61</td>
+-                <td>2013/08/11</td>
+-                <td>$98,540</td>
+-            </tr>
+-            <tr>
+-                <td>Finn Camacho</td>
+-                <td>Support Engineer</td>
+-                <td>San Francisco</td>
+-                <td>47</td>
+-                <td>2009/07/07</td>
+-                <td>$87,500</td>
+-            </tr>
+-            <tr>
+-                <td>Serge Baldwin</td>
+-                <td>Data Coordinator</td>
+-                <td>Singapore</td>
+-                <td>64</td>
+-                <td>2012/04/09</td>
+-                <td>$138,575</td>
+-            </tr>
+-            <tr>
+-                <td>Zenaida Frank</td>
+-                <td>Software Engineer</td>
+-                <td>New York</td>
+-                <td>63</td>
+-                <td>2010/01/04</td>
+-                <td>$125,250</td>
+-            </tr>
+-            <tr>
+-                <td>Zorita Serrano</td>
+-                <td>Software Engineer</td>
+-                <td>San Francisco</td>
+-                <td>56</td>
+-                <td>2012/06/01</td>
+-                <td>$115,000</td>
+-            </tr>
+-            <tr>
+-                <td>Jennifer Acosta</td>
+-                <td>Junior Javascript Developer</td>
+-                <td>Edinburgh</td>
+-                <td>43</td>
+-                <td>2013/02/01</td>
+-                <td>$75,650</td>
+-            </tr>
+-            <tr>
+-                <td>Cara Stevens</td>
+-                <td>Sales Assistant</td>
+-                <td>New York</td>
+-                <td>46</td>
+-                <td>2011/12/06</td>
+-                <td>$145,600</td>
+-            </tr>
+-            <tr>
+-                <td>Hermione Butler</td>
+-                <td>Regional Director</td>
+-                <td>London</td>
+-                <td>47</td>
+-                <td>2011/03/21</td>
+-                <td>$356,250</td>
+-            </tr>
+-            <tr>
+-                <td>Lael Greer</td>
+-                <td>Systems Administrator</td>
+-                <td>London</td>
+-                <td>21</td>
+-                <td>2009/02/27</td>
+-                <td>$103,500</td>
+-            </tr>
+-            <tr>
+-                <td>Jonas Alexander</td>
+-                <td>Developer</td>
+-                <td>San Francisco</td>
+-                <td>30</td>
+-                <td>2010/07/14</td>
+-                <td>$86,500</td>
+-            </tr>
+-            <tr>
+-                <td>Shad Decker</td>
+-                <td>Regional Director</td>
+-                <td>Edinburgh</td>
+-                <td>51</td>
+-                <td>2008/11/13</td>
+-                <td>$183,000</td>
+-            </tr>
+-            <tr>
+-                <td>Michael Bruce</td>
+-                <td>Javascript Developer</td>
+-                <td>Singapore</td>
+-                <td>29</td>
+-                <td>2011/06/27</td>
+-                <td>$183,000</td>
+-            </tr>
+-            <tr>
+-                <td>Donna Snider</td>
+-                <td>Customer Support</td>
+-                <td>New York</td>
+-                <td>27</td>
+-                <td>2011/01/25</td>
+-                <td>$112,000</td>
+-            </tr
++        <?php
++            foreach ($active as $key => $value) {
++        ?>
++         <tr>
++            <td class="ac_name">
++                    <?php echo $value["ac_name"]?>
++            </td>
++            <td class="ac_id" style="display:none;">
++                    <?php echo $value["ac_id"]?>
++            </td>
++            <td class="type_name">
++                    <?php echo $value["type_name"]?>
++            </td>
++            <td class="ac_type" style="display:none;">
++                    <?php echo $value["ac_type"]?>
++            </td>
++            <td class="ac_weather">
++                    <?php echo $value["ac_weather"]?>
++            </td>
++            <td class="ac_drive">
++                    <?php echo $value["ac_drive"]?>
++            </td>
++            <td class="ac_carry">
++                    <?php echo $value["ac_carry"]?>
++            </td>
++            <td class="ac_spend">
++                    <?php echo $value["ac_spend"]?>元
++            </td>
++            <td class="ac_hours">
++                    <?php echo $value["ac_hours"]?>
++            </td>
++            <?php
++                if($us_admin=='Y'){                
++            ?>
++            <td class="ac_edit">
++                <input type="button" value="編輯項目" onClick="edit(this)"/>
++            </td>
++            <?php
++                }
++            ?>
++        </tr>
++        <?php 
++            }
++        ?>
+ 	</tbody>
+   <tfoot>
+   </tfoot>
+ </table>
+-<script language="JavaScript">
+-	$(document).ready(function() {
+-    $('#example').DataTable();
+-} );
+-</script>
+-
++    <input type="button" style="display:none;" name="backpage" value="回上一頁" onClick="back_activity()"/>
++    <p class="activity" style="display:none;">活動項目:
++          <input type="text" name="add_acname" value="" ><br/><br/>
++    </p>
++    <p class="type" style="display:none;">類型:
++        <select name="add_actype">
++            <option value="1">運動</option>
++            <option value="2">輕鬆</option>
++            <option value="3">景點</option>
++        </select>
++        <br/><br/>
++    </p>
++    <p class="weather" style="display:none;">天氣:
++        <select name="add_acweather">
++            <option value="不拘">不拘</option>
++            <option value="晴天">晴天</option>
++            <option value="晴天、陰天">晴天、陰天</option>
++        </select>
++        <br/><br/>
++    </p>
++    <p class="drive" style="display:none;">車程(小時):
++        <select name="add_acdrive">
++            <option value="1">1</option>
++            <option value="2">2</option>
++            <option value="3">3</option>
++        </select>小時
++        <br/><br/>
++    </p>
++    <p class="carry" style="display:none;">攜帶物品:
++          <input type="text" name="add_accarry" value="無" ><br/><br/>
++    </p>
++    <p class="spend" style="display:none;">花費:
++          <input type="text" name="add_acspend" value="0" >元<br/><br/>
++    </p>
++    <p class="hours" style="display:none;">時間(小時):
++        <select name="add_achours">
++            <option value="1">1</option>
++            <option value="2">2</option>
++            <option value="3">3</option>
++        </select>小時
++        <br/><br/>
++    </p>
++    <input type="hidden" name="add_acid" value=""/>
++    <input type="button" style="display:none;" name="addactivity" value="新增" onClick="insert()" />
++    <input type="button" style="display:none;" name="upactivity" value="送出" onClick="update()" />
++    <input type="hidden" name="add_activitys"/>
+     </form>  
+   </body>
+   <script language="JavaScript">
++    $(document).ready(function() {
++        $('#example').DataTable();
++        if($("input[name='admin']").val()=="Y"){
++            $("input[name='add']").show();
++        }
++    } );
++
+     function show(page){
++        if($("input[name='admin']").val()=="Y" && page!="activity" && page!="sign_out"){
++            page = page + "_admin";
++        }
+         document.showForm.action=page+".php"; 
+         document.showForm.submit();
+     }
++
++    function go_plan(){
++        var objName = "",objType = "",objHour = "",objSpend = "";
++        var trs=$("table#example tr");
++        $("input[name='add']:checked").each(function(){
++            var obj = $(this).closest("tr");
++            objName = objName + obj.find(".ac_name").text().trim() + ",";
++            objType = objType + obj.find(".ac_type").text().trim() + ",";
++            objHour = objHour + obj.find("select[name='hour']").val() + ",";
++            objSpend = objSpend + obj.find("input[name='spend']").val() + ","; 
++        });
++        objName = objName.substring(0, objName.length-1);
++        objType = objType.substring(0, objType.length-1);
++        objHour = objHour.substring(0, objHour.length-1);
++        objSpend = objSpend.substring(0, objSpend.length-1);
++
++        $("input[name='objName']").val(objName);
++        $("input[name='objType']").val(objType);
++        $("input[name='objHour']").val(objHour);
++        $("input[name='objSpend']").val(objSpend);
++
++        document.showForm.action="plan.php"; 
++        document.showForm.submit();
++    }
++
++    function add_activity(){
++        $('#example_wrapper').hide()
++        $("input[name='add']").hide();
++        $("input[name='backpage']").show();
++        $(".activity").show();
++        $(".type").show();
++        $(".weather").show();
++        $(".drive").show();
++        $(".carry").show();
++        $(".spend").show();
++        $(".hours").show();
++        $("input[name='addactivity']").show();
++    }
++
++    function back_activity(){
++        $('#example_wrapper').show()
++        $("input[name='add']").show();
++        $("input[name='backpage']").hide();
++        $(".activity").hide();
++        $(".type").hide();
++        $(".weather").hide();
++        $(".drive").hide();
++        $(".carry").hide();
++        $(".spend").hide();
++        $(".hours").hide();
++        $("input[name='addactivity']").hide();
++        $("input[name='upactivity']").hide();
++    }
++
++    function insert(){
++        var add_acname = $("input[name='add_acname']").val();
++        var carry = $("input[name='carry']").val();
++
++        if(add_acname==""){
++            return alert("請輸入活動項目!");
++        }
++
++        if(carry==""){
++            return alert("請輸入攜帶物品!");
++        }
++
++        document.showForm.action="insert.php"; 
++        document.showForm.submit();
++    }
++
++    function edit(obj){
++        var tr = $(obj).closest('tr');
++        var ac_id = $(tr).find(".ac_id").text().trim();
++        var ac_name = $(tr).find(".ac_name").text().trim();
++        var ac_type = $(tr).find(".ac_type").text().trim();  
++        var ac_weather = $(tr).find(".ac_weather").text().trim();
++        var ac_drive = $(tr).find(".ac_drive").text().trim();
++        var ac_carry = $(tr).find(".ac_carry").text().trim();
++        var ac_spend = $(tr).find(".ac_spend").text().trim();
++        ac_spend = ac_spend.substring(0, ac_spend.length-1);
++        var ac_hours = $(tr).find(".ac_hours").text().trim();
++        
++        $("input[name='add_acid']").val(ac_id);
++        $("input[name='add_acname']").val(ac_name);
++        $("select[name='add_actype'] option[value="+ac_type+"]").attr("selected",true); 
++        $("select[name='add_acweather'] option[value="+ac_weather+"]").attr("selected",true); 
++        $("select[name='add_acdrive'] option[value="+ac_drive+"]").attr("selected",true); 
++        $("input[name='add_accarry']").val(ac_carry);
++        $("input[name='add_acspend']").val(ac_spend);
++        $("select[name='add_achours'] option[value="+ac_hours+"]").attr("selected",true); 
++
++        add_activity();
++        $("input[name='addactivity']").hide();
++        $("input[name='upactivity']").show();
++    }
++
++    function update(){
++        var add_acname = $("input[name='add_acname']").val();
++        var carry = $("input[name='carry']").val();
++
++        if(add_acname==""){
++            return alert("請輸入活動項目!");
++        }
++
++        if(carry==""){
++            return alert("請輸入攜帶物品!");
++        }
++
++        document.showForm.action="update_activity.php"; 
++        document.showForm.submit();
++    }
+   </script>
+ </html>
+ 
+diff --git a/plan/insert.php b/plan/insert.php
+index 6f54f36..659854d 100644
+--- a/plan/insert.php
++++ b/plan/insert.php
+@@ -2,20 +2,83 @@
+     session_start();
+     include("mysql.php");
+ 
+-    $us_account = $_POST['us_account'];
+-    $us_password= $_POST['us_password'];
+-    $us_password = password_hash($us_password, PASSWORD_DEFAULT);
++    $us_account = "";
++    if(isset($_POST['us_account'])){
++        $us_account = $_POST['us_account'];
++    }
++
++    $us_password = "";
++    if(isset($_POST['us_password'])){
++        $us_password = $_POST['us_password'];
++        $us_password = password_hash($us_password, PASSWORD_DEFAULT);
++    }
+ 
+     date_default_timezone_set('Asia/Taipei');
+     $datetime = date ("Y-m-d H:i:s");
+ 
+-    $sql = "INSERT INTO user (us_account, us_password, us_name, us_gender, us_admin, us_status, us_email, us_last_login)
+-        VALUES ('$us_account', '$us_password', '', '', 'N', 1, '', '$datetime')";
++    $sql = null;
++    if(isset($_POST['setup_user'])){
++        //剛建立，姓名暫時用帳號
++        $sql = "INSERT INTO user (us_account, us_password, us_name, us_gender, us_admin, us_status, us_email, us_last_login)
++        VALUES ('$us_account', '$us_password', '$us_account', '', 'N', 1, '', '$datetime')";
++
++        $conn->exec($sql);
++
++         //建立帳號後建立session物件
++        $sql = "select us_id,us_name,us_password,us_admin from user where us_account='" . $us_account  ."'";
+         
++        $query = $conn->query($sql);
++        $row = $query->fetch(PDO::FETCH_ASSOC);
++
++
++        session_start();
++        $_SESSION['us_account'] = $us_account;      //帳號
++        $_SESSION['us_id'] = $row['us_id'];         //id
++        $_SESSION['us_name'] = $row['us_name'];     //使用者姓名   
++        $_SESSION['us_admin'] = $row['us_admin'];   //是否有權限
++    }else if(isset($_POST['add_account'])){
++        $us_name = $_POST['us_name'];
++        $us_gender = $_POST['us_gender'];
++        $us_email = $_POST['us_email'];
++        $us_status = $_POST['us_status'];
++
++        if(empty($us_status)){
++            $us_status = 1;
++        }
++        
++        $sql = "INSERT INTO user (us_account, us_password, us_name, us_gender, us_admin, us_status, us_email, us_last_login)
++        VALUES ('$us_account', '$us_password', '$us_name', '$us_gender', 'N', $us_status, '$us_email', '$datetime')";
++        $conn->exec($sql);
++    }else if(isset($_POST['add_activitys'])){
++        $add_acname = $_POST['add_acname'];
++        $add_actype = $_POST['add_actype'];
++        $add_acweather = $_POST['add_acweather'];
++        $add_acdrive = $_POST['add_acdrive'];
++        $add_accarry = $_POST['add_accarry'];
++        $add_acspend = $_POST['add_acspend'];
++        $add_achours = $_POST['add_achours'];
++        
++        $sql = "INSERT INTO activity (ac_type, ac_name, ac_weather, ac_drive, ac_carry, ac_spend, ac_hours)
++        VALUES ($add_actype, '$add_acname', '$add_acweather', $add_acdrive, '$add_accarry', $add_acspend, $add_achours)";
++        $conn->exec($sql);
++    }
++
+ 
+-    $conn->exec($sql);
+     $conn=null;
+ ?>
+ <script language="JavaScript">
+-        location.href = "login.php";
++    <?php if(isset($_POST['setup_user'])){
++    ?>
++        location.href = "plan.php";
++    <?php   
++    }else if(isset($_POST['add_account'])){
++    ?>
++        location.href = "setting_admin.php";
++    <?php
++    }else if(isset($_POST['add_activitys'])){
++    ?>
++        location.href = "activity.php";
++    <?php
++    }
++    ?>
+ </script>
+\ No newline at end of file
+diff --git a/plan/jquery.dataTables.min.js b/plan/jquery.dataTables.min.js
+index 1c0e32d..40f2ee8 100644
+--- a/plan/jquery.dataTables.min.js
++++ b/plan/jquery.dataTables.min.js
+@@ -142,7 +142,7 @@ a._);return a.replace("%d",c)});n.version="1.10.19";n.settings=[];n.models={};n.
+ sClass:null,sContentPadding:null,sDefaultContent:null,sName:null,sSortDataType:"std",sSortingClass:null,sSortingClassJUI:null,sTitle:null,sType:null,sWidth:null,sWidthOrig:null};n.defaults={aaData:null,aaSorting:[[0,"asc"]],aaSortingFixed:[],ajax:null,aLengthMenu:[10,25,50,100],aoColumns:null,aoColumnDefs:null,aoSearchCols:[],asStripeClasses:null,bAutoWidth:!0,bDeferRender:!1,bDestroy:!1,bFilter:!0,bInfo:!0,bLengthChange:!0,bPaginate:!0,bProcessing:!1,bRetrieve:!1,bScrollCollapse:!1,bServerSide:!1,
+ bSort:!0,bSortMulti:!0,bSortCellsTop:!1,bSortClasses:!0,bStateSave:!1,fnCreatedRow:null,fnDrawCallback:null,fnFooterCallback:null,fnFormatNumber:function(a){return a.toString().replace(/\B(?=(\d{3})+(?!\d))/g,this.oLanguage.sThousands)},fnHeaderCallback:null,fnInfoCallback:null,fnInitComplete:null,fnPreDrawCallback:null,fnRowCallback:null,fnServerData:null,fnServerParams:null,fnStateLoadCallback:function(a){try{return JSON.parse((-1===a.iStateDuration?sessionStorage:localStorage).getItem("DataTables_"+
+ a.sInstance+"_"+location.pathname))}catch(b){}},fnStateLoadParams:null,fnStateLoaded:null,fnStateSaveCallback:function(a,b){try{(-1===a.iStateDuration?sessionStorage:localStorage).setItem("DataTables_"+a.sInstance+"_"+location.pathname,JSON.stringify(b))}catch(c){}},fnStateSaveParams:null,iStateDuration:7200,iDeferLoading:null,iDisplayLength:10,iDisplayStart:0,iTabIndex:0,oClasses:{},oLanguage:{oAria:{sSortAscending:": activate to sort column ascending",sSortDescending:": activate to sort column descending"},
+-oPaginate:{sFirst:"First",sLast:"Last",sNext:"Next",sPrevious:"Previous"},sEmptyTable:"No data available in table",sInfo:"Showing _START_ to _END_ of _TOTAL_ entries",sInfoEmpty:"Showing 0 to 0 of 0 entries",sInfoFiltered:"(filtered from _MAX_ total entries)",sInfoPostFix:"",sDecimal:"",sThousands:",",sLengthMenu:"Show _MENU_ entries",sLoadingRecords:"Loading...",sProcessing:"Processing...",sSearch:"Search:",sSearchPlaceholder:"",sUrl:"",sZeroRecords:"No matching records found"},oSearch:h.extend({},
++oPaginate:{sFirst:"First",sLast:"Last",sNext:"下一頁",sPrevious:"上一頁"},sEmptyTable:"No data available in table",sInfo:"Showing _START_ to _END_ of _TOTAL_ entries",sInfoEmpty:"Showing 0 to 0 of 0 entries",sInfoFiltered:"(filtered from _MAX_ total entries)",sInfoPostFix:"",sDecimal:"",sThousands:",",sLengthMenu:"Show _MENU_ entries",sLoadingRecords:"Loading...",sProcessing:"Processing...",sSearch:"搜尋:",sSearchPlaceholder:"",sUrl:"",sZeroRecords:"No matching records found"},oSearch:h.extend({},
+ n.models.oSearch),sAjaxDataProp:"data",sAjaxSource:null,sDom:"lfrtip",searchDelay:null,sPaginationType:"simple_numbers",sScrollX:"",sScrollXInner:"",sScrollY:"",sServerMethod:"GET",renderer:null,rowId:"DT_RowId"};Z(n.defaults);n.defaults.column={aDataSort:null,iDataSort:-1,asSorting:["asc","desc"],bSearchable:!0,bSortable:!0,bVisible:!0,fnCreatedCell:null,mData:null,mRender:null,sCellType:"td",sClass:"",sContentPadding:"",sDefaultContent:null,sName:"",sSortDataType:"std",sTitle:null,sType:null,sWidth:null};
+ Z(n.defaults.column);n.models.oSettings={oFeatures:{bAutoWidth:null,bDeferRender:null,bFilter:null,bInfo:null,bLengthChange:null,bPaginate:null,bProcessing:null,bServerSide:null,bSort:null,bSortMulti:null,bSortClasses:null,bStateSave:null},oScroll:{bCollapse:null,iBarWidth:0,sX:null,sXInner:null,sY:null},oLanguage:{fnInfoCallback:null},oBrowser:{bScrollOversize:!1,bScrollbarLeft:!1,bBounding:!1,barWidth:0},ajax:null,aanFeatures:[],aoData:[],aiDisplay:[],aiDisplayMaster:[],aIds:{},aoColumns:[],aoHeader:[],
+ aoFooter:[],oPreviousSearch:{},aoPreSearchCols:[],aaSorting:null,aaSortingFixed:[],asStripeClasses:null,asDestroyStripes:[],sDestroyWidth:0,aoRowCallback:[],aoHeaderCallback:[],aoFooterCallback:[],aoDrawCallback:[],aoRowCreatedCallback:[],aoPreDrawCallback:[],aoInitComplete:[],aoStateSaveParams:[],aoStateLoadParams:[],aoStateLoaded:[],sTableId:"",nTable:null,nTHead:null,nTFoot:null,nTBody:null,nTableWrapper:null,bDeferLoading:!1,bInitialised:!1,aoOpenRows:[],sDom:null,searchDelay:null,sPaginationType:"two_button",
+diff --git a/plan/login.php b/plan/login.php
+index 71b2fa3..c79b558 100644
+--- a/plan/login.php
++++ b/plan/login.php
+@@ -2,8 +2,24 @@
+   <head>
+     <title>規劃行程系統</title>
+   </head>
++     <!-- jQuery v1.9.1 -->
++<script src="jquery-3.3.1.js"></script>
++<!-- DataTables v1.10.16 -->
++<link href="jquery.dataTables.min.css" rel="stylesheet" />
++<script src="jquery.dataTables.min.js"></script>
+   <body>
+-  
++  <?php
++    $error = false;
++    $errorMessage = "";
++    if(isset($_GET['error'])){
++      $error = $_GET['error'];
++    }
++
++    if(isset($_GET['errorMessage'])){
++      $errorMessage = $_GET['errorMessage'];
++    }
++  ?>
++
+     <form name="loginForm" method="post">
+         帳號: <input type="text" name="us_account" /><br/><br/>
+ 
+@@ -11,11 +27,23 @@
+ 
+ 　      <input type="button" value="登入" onClick="sign_in()"/>
+         <input type="button" value="建立" onClick="setup()"/>
++        <input type="hidden" name="error" value="<?php echo $error ?>"/>
++        <input type="hidden" name="errorMessage" value="<?php echo $errorMessage ?>"/>
+     </form>  
+  
+ 
+   </body>
+   <script language="JavaScript">
++    $(document).ready(function() {
++      var error = $("input[name='error']").val();
++      var errorMessage = $("input[name='errorMessage']").val();
++      if(errorMessage!=""){
++        alert(errorMessage);
++      }else if(error=="true"){
++        alert("帳號密碼輸入錯誤!");
++      }
++    });
++
+     function sign_in(){
+       document.loginForm.action="sign_in.php"; 
+ 	    document.loginForm.submit();
+diff --git a/plan/setting.php b/plan/setting.php
+index 190963b..e1e102e 100644
+--- a/plan/setting.php
++++ b/plan/setting.php
+@@ -2,38 +2,184 @@
+   <head>
+     <title>規劃行程系統</title>
+   </head>
++   <!-- jQuery v1.9.1 -->
++<script src="jquery-3.3.1.js"></script>
++<!-- DataTables v1.10.16 -->
++<link href="jquery.dataTables.min.css" rel="stylesheet" />
++<script src="jquery.dataTables.min.js"></script>
+   <?php session_start();
+-        include("mysql.php"); ?>
++        include("mysql.php");
++
++        $us_admin = $_SESSION['us_admin'];
++        if(!empty($us_admin)){
++          include("select_setting.php"); 
++        }
++
++        $us_account = $_SESSION['us_account'];
++        $us_name = $_SESSION['us_name'];
++        $us_gender = "";
++        $us_email = "";
++        $us_status = "";
++        $add_account = "";
++
++        if($us_admin=="Y"){
++          if(isset($_POST['us_account'])){
++            $us_account = $_POST['us_account'];
++          }
++          if(isset($_POST['us_name'])){
++            $us_name = $_POST['us_name'];
++          }     
++          if(isset($_POST['us_gender'])){
++            $us_gender = $_POST['us_gender'];
++          }
++          if(isset($_POST['us_email'])){
++            $us_email = $_POST['us_email'];
++          }
++          if(isset($_POST['us_status'])){
++            $us_status = $_POST['us_status'];
++          }
++          if(isset($_POST['add_account'])){
++            $add_account = $_POST['add_account'];
++          }
++        }else{
++          foreach ($setting as $key => $value) {
++            $us_gender = $value["us_gender"];
++            $us_email = $value["us_email"];
++          }
++        }
++        
++
++  ?>
+   <body>
+ 
+-    <form name="showForm" method="post">
+-        <input type="button" value="活動行程" onClick="show('activity')"/>
+-        <input type="button" value="行程規劃" onClick="show('plan')"/>
++    <form action="<?php echo "update.php" ?>" name="showForm" method="post">
++        <input type="hidden" name="admin" value="<?=$us_admin?>"/>
++        <input type="hidden" name="add_account" value="<?=$add_account?>"/>
++        <input type="button" value="活動列表" onClick="show('activity')"/>
++        <input type="button" value="行程列表" onClick="show('plan')"/>
+         <input type="button" value="設定" onClick="show('setting')"/>
+         &nbsp&nbsp
+         Hi!<?php echo $_SESSION['us_name'];?>
+         <input type="button" value="登出" onClick="show('sign_out')"/>
+         <br/><br/>
++        <H2>設定</H2>
+ 
+-        帳號: <?php echo $_SESSION['us_account'] ?><br/><br/>
++        帳號: 
++        <?php
++          if(!empty($add_account)){           
++        ?>
++          <input type="text" name="us_account" value=""/><br/><br/>
++        <?php
++          }else{
++            echo $us_account
++        ?>
++          <br/><br/>
++          <input type="hidden" name="us_account" value="<?= $us_account ?>"/>
++        <?php
++          }
++          ?>
+ 
+-        密碼: <input type="password" name="us_passwor" /><br/><br/>
++        密碼: <input type="password" name="us_password" value=""/>(請輸入8-15數字和英文)<br/><br/>
+ 
+-        請在輸入一次密碼: <input type="password" name="us_password" /><br/><br/>
++        請在輸入一次密碼: <input type="password" name="agree_us_password" value=""/>(請輸入8-15數字和英文)<br/><br/>
+ 
+-        姓名: <input type="text" name="us_name" /><br/><br/>
++        姓名: 
++        <?php
++          if(!empty($add_account)){           
++        ?>
++          <input type="text" name="us_name" value=""/><br/><br/>
++        <?php
++          }else{
++            echo $us_account
++        ?>
++          <input type="text" name="us_name" value="<?php echo $us_name!="未填寫"?$us_name:"" ?>"/><br/><br/>
++        <?php
++          }
++          ?>
+ 
+         性別: <input type="radio" name="us_gender" value="R" checked>男&nbsp
+-        <input type="radio" name="us_gender" value="">女<br/><br/>
++        <input type="radio" name="us_gender" value="S">女<br/><br/>
++        <input type="hidden" name="gender" value="<?php echo $us_gender!="未填寫"?$us_gender:"" ?>"/>
++
++        電子信箱: <input type="text" name="us_email" value="<?php echo $us_email!="未填寫"?$us_email:"" ?>"/><br/><br/>
+ 
+-        電子信箱: <input type="text" name="us_email" /><br/><br/>
++        <p class="status" style="display:none;">狀態:
++          <input type="radio" name="us_status" value=1 checked>正常&nbsp
++          <input type="radio" name="us_status" value=2>停用<br/><br/>
++          <input type="hidden" name="status" value="<?php echo $us_status ?>"/>
++        </p>
+ 
+-    </form>  
++        <input type="button" value="確定" onClick="check()"/>
++        <input type="hidden" name="update_user"/>
++    </form>
+   </body>
+   <script language="JavaScript">
++    $(document).ready(function() {
++      var admin = $("input[name='admin']").val();
++      var status = $("input[name='status']").val();
++      if(admin=='Y'){
++        $(".status").show();
++        $("input[name='us_status'][value='" + status + "']").prop("checked", true); 
++        $("input[name='us_password']").val("0000");
++        $("input[name='agree_us_password']").val("0000");
++      }
++
++      var gender = $("input[name='gender']").val();
++      $("input[name='us_gender'][value='" + gender + "']").prop("checked", true); 
++    });
++
++    function check(){
++      var us_account = $("input[name='us_account']").val();
++      var us_password = $("input[name='us_password']").val();
++      var agree_us_password = $("input[name='agree_us_password']").val();
++      var us_name = $("input[name='us_name']").val();
++      var us_email = $("input[name='us_email']").val();
++      var us_gender = $("input[name='us_gender']:checked").val();
++
++      if(us_account==""){
++        return alert("請輸入帳號!");
++      }
++      // if(us_password==""){
++      //   return alert("請輸入密碼!");
++      // }
++      // if(us_password.match("^.*(?=.{8,15})(?=.*\d)(?=.*[a-zA-Z]).*$")){
++      //   return alert("密碼格式錯誤!");
++      // }
++      // if(agree_us_password==""){
++      //   return alert("請輸入密碼!");
++      // }
++      // if(agree_us_password.match("^.*(?=.{8,15})(?=.*\d)(?=.*[a-zA-Z]).*$")){
++      //   return alert("密碼格式錯誤!");
++      // }
++      if(us_password!=agree_us_password){
++        return alert("請輸入密碼錯誤!");
++      }
++      
++      // if(us_name==""){
++      //   return alert("請輸入姓名!");
++      // }
++      
++      // if(us_email==""){
++      //   return alert("請輸入電子信箱!");
++      // }
++      
++      if(us_email.match("^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$")){
++        return alert("電子信箱格式錯誤!");
++      }
++
++      var add_account = $("input[name='add_account']").val();
++      if(add_account!=""){
++        document.showForm.action="insert.php"; 
++      }
++      document.showForm.submit();
++    }
++
+     function show(page){
+-        document.showForm.action=page+".php"; 
+-        document.showForm.submit();
++      if($("input[name='admin']").val()=="Y" && page!="activity" && page!="sign_out"){
++            page = page + "_admin";
++      }
++      document.showForm.action=page+".php"; 
++      document.showForm.submit();
+     }
+   </script>
+ </html>
+diff --git a/plan/setup.php b/plan/setup.php
+index 3eff5d5..7d70838 100644
+--- a/plan/setup.php
++++ b/plan/setup.php
+@@ -2,16 +2,32 @@
+   <head>
+     <title>規劃行程系統</title>
+   </head>
++       <!-- jQuery v1.9.1 -->
++<script src="jquery-3.3.1.js"></script>
++<!-- DataTables v1.10.16 -->
++<link href="jquery.dataTables.min.css" rel="stylesheet" />
++<script src="jquery.dataTables.min.js"></script>
+   <body>
+-
+-    <form action="<?php echo "insert.php" ?>" method="post">
++    <form action="<?php echo "insert.php" ?>" name="setupForm" method="post">
+         請輸入帳號: <input type="text" name="us_account" /><br/><br/>
+ 
+         請輸入密碼: <input type="password" name="us_password" /><br/><br/>
+ 
+-　      <input type="submit" value="建立"/>         
++        <input type="hidden" name="setup_user"/>
++　      <input type="button" value="建立" onClick="set()"/>         
+     </form>  
+- 
++    <script language="JavaScript">
++    function set(){
++      // var us_password=$("input[name='us_password']").val();
++      // var pass = us_password.match("^.*(?=.{8,15})(?=.*\d)(?=.*[a-zA-Z]).*$");
++      // if(us_password.match("^.*(?=.{8,15})(?=.*\d)(?=.*[a-zA-Z]).*$")==null){
++      //   return alert("密碼錯誤!");
++      // }
++	    document.setupForm.submit();
++    }
++      
++    </script>
++    
+ 
+   </body>
+ </html>
+\ No newline at end of file
+diff --git a/plan/sign_in.php b/plan/sign_in.php
+index 1bf795e..d8f0483 100644
+--- a/plan/sign_in.php
++++ b/plan/sign_in.php
+@@ -4,24 +4,42 @@
+     $us_password= $_POST['us_password'];
+ 
+ 
+-    $sql = "select us_name,us_password,us_admin from user where us_account='" . $us_account  ."'";
++    $sql = "select us_id,us_name,us_password,us_admin from user where us_account='" . $us_account  ."' and us_status = 1 ";
+         
+     $query = $conn->query($sql);
+     $row = $query->fetch(PDO::FETCH_ASSOC);
+-    
+-    if(password_verify($us_password,$row['us_password'])){
+-        session_start();
+-        $_SESSION['us_account'] = $us_account;      //帳號
+-        $_SESSION['us_name'] = $row['us_name'];     //使用者姓名   
+-        $_SESSION['us_admin'] = $row['us_admin'];   //是否有權限
+ 
+-        //登入後更新登入時間
+-        date_default_timezone_set('Asia/Taipei');
+-        $datetime = date ("Y-m-d H:i:s");
+-        $sql = "update user set us_last_login = '$datetime' where us_account='$us_account'"  ;
+-        $conn->exec($sql);
++    // 登入後更新登入時間
++    date_default_timezone_set('Asia/Taipei');
++    $datetime = date ("Y-m-d H:i:s");
++    
++    $success = false;
++    $errorMessage = "";
++    if($row!=""){
++        if(password_verify($us_password,$row['us_password'])){
++            session_start();
++            $_SESSION['us_account'] = $us_account;      //帳號
++            $_SESSION['us_id'] = $row['us_id'];         //id
++            $_SESSION['us_name'] = $row['us_name'];     //使用者姓名   
++            $_SESSION['us_admin'] = $row['us_admin'];   //是否有權限
++    
++            $sql = "update user set us_last_login = '$datetime' where us_account='$us_account'"  ;
++            $conn->exec($sql);
++            
++            $success = true;
++            echo '<meta http-equiv=REFRESH CONTENT=0;url=activity.php>';
++        }else{
++            echo '<meta http-equiv=REFRESH CONTENT=0;url=login.php?error=true>';
++        }
++    }else{
++        $errorMessage = "該帳號已停用!";
++        echo '<meta http-equiv=REFRESH CONTENT=0;url=login.php?error=true&errorMessage='.$errorMessage.'>';
+     }
+-?>
+-<script language="JavaScript">
+-    location.href = "activity.php";
+-</script>
+\ No newline at end of file
++    
++    
++    // $sql = "select us_name,us_password,us_admin from user where us_account='" . $us_account  ."' and us_last_login='" . $datetime . "'";
++    // $query = $conn->query($sql);
++    // $login = $query->fetchAll(PDO::FETCH_ASSOC);
++    // return $login;
++
++?>
+\ No newline at end of file
+diff --git a/plan/sign_out.php b/plan/sign_out.php
+index c9175a7..daa7657 100644
+--- a/plan/sign_out.php
++++ b/plan/sign_out.php
+@@ -1,5 +1,7 @@
+ <?php
+-    session_unset();
++    session_start();
++    session_unset( );
++    session_destroy( );
+ ?>
+ <script language="JavaScript">
+     location.href = "login.php";
+diff --git a/plan/test_insert.php b/plan/test_insert.php
+index 375efa2..889fc2c 100644
+--- a/plan/test_insert.php
++++ b/plan/test_insert.php
+@@ -2,8 +2,71 @@
+     session_start();
+     include("mysql.php");
+ 
+-    $sql = "INSERT INTO activity (ac_type,ac_hours,ac_spend,ac_name)
+-        VALUES (1, '景點')";
++    // $sql = "CREATE TABLE user()
++    //     us_id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
++    //     us_account VARCHAR(30) NOT NULL,
++    //     us_password VARCHAR(60) NOT NULL,
++    //     us_name NVARCHAR(30) NOT NULL,
++    //     us_gender VARCHAR(11) NOT NULL,
++    //     us_admin VARCHAR(11) NOT NULL,
++    //     us_status INT(11) NOT NULL,
++    //     us_email VARCHAR(30) NOT NULL,
++    //     us_last_login TIMESTAMP,
++    //     us_updatedate TIMESTAMP
++    //     )";
++
++    // $sql = "CREATE TABLE plan_acname(
++    //     pn_id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
++    //     pn_ptid INT(6) NOT NULL,
++    //     pn_acid INT(6) NOT NULL,
++    //     pn_acname NVARCHAR(30) NOT NULL,
++    //     pn_updatedate TIMESTAMP
++    //     )";
++
++    // $sql = "CREATE TABLE time_types(
++    //     ty_id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
++    //     ty_type INT(6) NOT NULL,
++    //     ty_name NVARCHAR(30) NOT NULL,
++    //     ty_updatedate TIMESTAMP
++    //     )";
++
++    // $sql = "INSERT INTO activity (ac_type, ac_name, ac_weather, ac_drive, ac_carry, ac_spend, ac_hours)
++    // VALUES (3, '上課','不拘',2,'錢包、筆記型電腦',1000,2)";
++
++    // $sql = "INSERT INTO plan_trip (pt_acid, pt_name, pt_hours, pt_date, pt_usid,pt_usname,pt_status)
++    // VALUES (12, '指導課程', 5,'2018-08-20',8,'使用者',1  )
++    // ,(5, '指導課程', 5,'2018-08-20',8,'使用者',1  )";
++
++    //  $sql = "INSERT INTO plan_acname (pn_ptid, pn_acid, pn_acname)
++    // VALUES (25, 12, '上課')
++    // ,(25, 5, '吃飯')
++    // ,(29, 2, '保齡球')
++    // ,(29, 10, '兒童樂園')
++    // ,(40, 2, '保齡球')
++    // ,(43, 10, '兒童樂園')
++    // ,(43, 1, '籃球')
++    // ,(47, 12, '上課')
++    // ,(47, 2, '保齡球')
++    // ,(47, 12, '上課')
++    // ,(54, 2, '保齡球')";
++
++    //$sql = "INSERT INTO time_types (ty_type, ty_name)
++    //VALUES (5, '早午')";
++
++    // $sql = "CREATE TABLE activity_weather(
++    //      aw_id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
++    //      aw_type INT(6) NOT NULL,
++    //      aw_name NVARCHAR(30) NOT NULL,
++    //      aw_updatedate TIMESTAMP
++    //      )";
++
++    $sql = "INSERT INTO activity_weather (aw_type, aw_name)
++    VALUES (1, '晴天')
++    ,(2, '陰天')
++    ,(3, '雨天')
++    ,(4, '不拘')
++    ,(5, '晴天、陰天')";
++
+ 
+     $conn->exec($sql);
+     $conn=null;

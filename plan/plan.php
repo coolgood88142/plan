@@ -43,14 +43,15 @@
         <H2>行程列表</H2>
         <br/><br/>
         <input type="button" name="addplan" value="新增行程" onClick="add_plan()"/>
-        <p class="plan">行程名稱:<input type="text" name="pt_name" value=""/></p>
-        <p class="date">出發日期:<input type="text" name="pt_date" value=""/>(yyyy-mm-dd)</p>
+        <p class="plan">行程名稱:<input type="text" name="plan_name" value=""/></p>
+        <p class="date">出發日期:<input type="text" name="plan_date" value=""/>(yyyy-mm-dd)</p>
         <input type="hidden" name="pt_usid" value="<?=$pt_usid?>"/>
         <input type="hidden" name="pt_usname" value="<?=$pt_usname?>"/>
         <table id="example1">
 	        <thead>
                 <tr>
                     <td bgcolor="#00FFFF"></td>
+                    <td bgcolor="#00FFFF" style="display:none;">序號</td>
                     <td bgcolor="#00FFFF" style="display:none;">user_id</td>
                     <td bgcolor="#00FFFF" style="display:none;">user_name</td>
                     <td bgcolor="#00FFFF">行程名稱</td>
@@ -67,6 +68,9 @@
                 ?>
                 <tr>
                     <td class=" details-control"></td>
+                    <td class="pt_id" style="display:none;">
+                        <?php echo $value["pt_id"]?>
+                    </td>
                     <td class="pt_usid" style="display:none;">
                         <?php echo $value["pt_usid"]?>
                     </td>
@@ -97,16 +101,19 @@
                         <input type="button" value="編輯" onClick="edit(this)"/>
                     <?php
                         foreach ($plan_trip as $key => $trip) {
-                            if($trip["pt_name"]==$value["pt_name"]){
+                            if($trip["pt_id"]==$value["pt_id"]){
                     ?>
-                        <input type="hidden" name="ac_name" value="<?=$trip["ac_name"]?>"/>
-                        <input type="hidden" name="ac_type" value="<?=$trip["ac_type"]?>"/>
-                        <input type="hidden" name="ac_weather" value="<?=$trip["ac_weather"]?>"/>
-                        <input type="hidden" name="ac_drive" value="<?=$trip["ac_drive"]?>"/>
-                        <input type="hidden" name="ac_carry" value="<?=$trip["ac_carry"]?>"/>
-                        <input type="hidden" name="ac_spend" value="<?=$trip["ac_spend"]?>"/>
-                        <input type="hidden" name="ac_hours" value="<?=$trip["ac_hours"]?>"/>
-                        <input type="hidden" name="type" value="<?=$trip["type"]?>"/>
+                      
+
+                                <input type="hidden" name="pn_id" value="<?=$trip["pn_id"]?>"/>
+                                <input type="hidden" name="pn_acname" value="<?=$trip["pn_acname"]?>"/>
+                                <input type="hidden" name="ac_type" value="<?=$trip["ac_type"]?>"/>
+                                <input type="hidden" name="ac_weather" value="<?=$trip["ac_weather"]?>"/>
+                                <input type="hidden" name="ac_drive" value="<?=$trip["ac_drive"]?>"/>
+                                <input type="hidden" name="ac_carry" value="<?=$trip["ac_carry"]?>"/>
+                                <input type="hidden" name="ac_spend" value="<?=$trip["ac_spend"]?>"/>
+                                <input type="hidden" name="ac_hours" value="<?=$trip["ac_hours"]?>"/>
+                                <input type="hidden" name="ac_id" value="<?=$trip["ac_id"]?>"/>
                     <?php
                             }
                         }
@@ -209,26 +216,33 @@
         <input type="hidden" name="ad_accarry" /> 
         <input type="hidden" name="ad_acspend" /> 
         <input type="hidden" name="ad_achours" />
+        <input type="hidden" name="ad_hours" />
         <input type="hidden" name="ad_acid" />
 
-        <input type="hidden" name="pt_name" /> 
-        <input type="hidden" name="pt_date" />
+        <input type="hidden" name="plan_name" /> 
+        <input type="hidden" name="plan_date" />
         <input type="hidden" name="pt_usid" />
         <input type="hidden" name="pt_usname" />
+
+        <input type="hidden" name="us_id" />
+        <input type="hidden" name="us_name" />
+        <input type="hidden" name="newplan" value="true"/>
     </form>
     <form action="plan_edit.php" name="submitForm" method="post">
+        <input type="hidden" name="pt_id" />
         <input type="hidden" name="pt_usid" />
         <input type="hidden" name="pt_usname" />
         <input type="hidden" name="pt_name" />
         <input type="hidden" name="pt_date" />
-        <input type="hidden" name="ac_name" />
+        <input type="hidden" name="pn_id" />
+        <input type="hidden" name="pn_acname" />
         <input type="hidden" name="ac_type" />
         <input type="hidden" name="ac_weather" />
         <input type="hidden" name="ac_drive" />
         <input type="hidden" name="ac_carry" />    
         <input type="hidden" name="ac_spend" />    
-        <input type="hidden" name="ac_hours" /> 
-        <input type="hidden" name="type" />         
+        <input type="hidden" name="ac_hours" />
+        <input type="hidden" name="ac_id" />       
     </form>
   </body>
   <script language="JavaScript">
@@ -249,9 +263,9 @@
             var tr = $(this).closest('tr');
             var row = $('#example1').DataTable().row( tr );
             
-            var ac_name = [],ac_type = [],ac_weather = [],ac_drive = [],ac_carry = [],ac_spend = [],ac_hours = [],type = [];
-            $(tr).find("td input[name='ac_name']").each(function(){
-                ac_name.push($(this).val());
+            var pn_acname = [],ac_type = [],ac_weather = [],ac_drive = [],ac_carry = [],ac_spend = [],ac_hours = [],type = [];
+            $(tr).find("td input[name='pn_acname']").each(function(){
+                pn_acname.push($(this).val());
             })
 
             $(tr).find("td input[name='ac_type']").each(function(){
@@ -286,7 +300,7 @@
                 tr.removeClass('shown');
             } else {
                 // Open this row
-                row.child( format(ac_name,ac_type,ac_weather,ac_drive,ac_carry,ac_spend,ac_hours,type) ).show();
+                row.child( format(pn_acname,ac_type,ac_weather,ac_drive,ac_carry,ac_spend,ac_hours,type) ).show();
                 tr.addClass('shown');
             }
         } );
@@ -312,7 +326,7 @@
     function go_plan(){
         $("input[name='addactivity']").show();
         if($('#example3_wrapper').is(':visible')){
-            var ad_acname="",ad_typename="",ad_acweather="",ad_acdrive="",ad_accarry="",ad_acspend=0,ad_achours=0,ad_acid="",type="",
+            var ad_acname="",ad_typename="",ad_acweather="",ad_acdrive="",ad_accarry="",ad_acspend=0,ad_achours=0,ad_acid="",type="",ad_hours="",
             isdelete="";
             var from = $("form[name='updateForm']");
             $("#example3 .type").each(function(){
@@ -348,6 +362,7 @@
 
                 var hours = parseInt(obj.find(".ac_hours").text().trim());
                 ad_achours = ad_achours + hours;
+                ad_hours = ad_hours + hours + ",";
                 ad_acid = ad_acid + obj.find(".ac_id").text().trim() + ",";
 
                 });
@@ -368,24 +383,25 @@
             $(from).find("input[name='ad_accarry']").val(ad_accarry);
             $(from).find("input[name='ad_acspend']").val(ad_acspend);
             $(from).find("input[name='ad_achours']").val(ad_achours);
+            $(from).find("input[name='ad_hours']").val(ad_hours);
             $(from).find("input[name='ad_acid']").val(ad_acid);
 
 
-            var pt_name = $("input[name='pt_name']").val();
-            var pt_date = $("input[name='pt_date']").val();
+            var plan_name = $("input[name='plan_name']").val().trim();
+            var plan_date = $("input[name='plan_date']").val().trim();
             var pt_usid = $("input[name='pt_usid']").val();
             var pt_usname = $("input[name='pt_usname']").val();
 
-            if(pt_name==""){
+            if(plan_name==""){
                 return alert("請輸入行程名稱!");
-            }else if(pt_date==""){
+            }else if(plan_date==""){
                 return alert("請輸入出發日期!");
-            }else if(!pt_date.match("^[0-9]{4}-(((0[13578]|(10|12))-(0[1-9]|[1-2][0-9]|3[0-1]))|(02/(0[1-9]|[1-2][0-9]))|((0[469]|11)-(0[1-9]|[1-2][0-9]|30)))$")){
+            }else if(!plan_date.match("^[0-9]{4}-(((0[13578]|(10|12))-(0[1-9]|[1-2][0-9]|3[0-1]))|(02/(0[1-9]|[1-2][0-9]))|((0[469]|11)-(0[1-9]|[1-2][0-9]|30)))$")){
                 return alert("出發日期格式錯誤!");
             }
             
-            $(from).find("input[name='pt_name']").val(pt_name);
-            $(from).find("input[name='pt_date']").val(pt_date);
+            $(from).find("input[name='plan_name']").val(plan_name);
+            $(from).find("input[name='plan_date']").val(plan_date);
             $(from).find("input[name='pt_usid']").val(pt_usid); 
             $(from).find("input[name='pt_usname']").val(pt_usname); 
 
@@ -485,9 +501,9 @@
 
     }
 
-    function format (ac_name,ac_type,ac_weather,ac_drive,ac_carry,ac_spend,ac_hours,type) {
+    function format (pn_acname,ac_type,ac_weather,ac_drive,ac_carry,ac_spend,ac_hours,type) {
 
-    var length = ac_name.length;
+    var length = pn_acname.length;
     var table = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
             '<td>活動項目</td>'+
@@ -501,7 +517,7 @@
         '</tr>';
     for(i=0;i<length;i++){
         table = table + '<tr>';
-        table = table + '<td>' + ac_name[i] + '</td>';
+        table = table + '<td>' + pn_acname[i] + '</td>';
         table = table + '<td>' + ac_type[i] + '</td>';
         table = table + '<td>' + ac_weather[i] + '</td>';
         table = table + '<td>' + ac_drive[i] + '</td>';
@@ -522,14 +538,19 @@
         var tr = $(obj).closest('tr');
         var pt_status = $(tr).find(".pt_status").text().trim();
         if(pt_status!="V"){
-            var ac_name = [],ac_type = [],ac_weather = [],ac_drive = [],ac_carry = [],ac_spend = [],ac_hours = [],type = [];
+            var pn_id = [],pn_acname = [],ac_type = [],ac_weather = [],ac_drive = [],ac_carry = [],ac_spend = [],ac_hours = [],ac_id = [];
+            var pt_id = $(tr).find(".pt_id").text().trim();
             var pt_usid = $(tr).find(".pt_usid").text().trim();
             var pt_usname = $(tr).find(".pt_usname").text().trim();  
             var pt_name = $(tr).find(".pt_name").text().trim();
             var pt_date = $(tr).find(".pt_date").text().trim();
 
-            $(tr).find("td input[name='ac_name']").each(function(){
-                ac_name.push($(this).val());
+            $(tr).find("td input[name='pn_id']").each(function(){
+                pn_id.push($(this).val());
+            })
+
+            $(tr).find("td input[name='pn_acname']").each(function(){
+                pn_acname.push($(this).val());
             })
 
             $(tr).find("td input[name='ac_type']").each(function(){
@@ -556,32 +577,33 @@
                 ac_hours.push($(this).val());
             })
 
-            $(tr).find("td input[name='type']").each(function(){
-                type.push($(this).val());
+            $(tr).find("td input[name='ac_id']").each(function(){
+                ac_id.push($(this).val());
             })
 
-            $(tr).find("td input[name='pt_usid']").each(function(){
-                pt_usid.push($(this).val());
-            })
+            // $(tr).find("td input[name='pt_usid']").each(function(){
+            //     pt_usid.push($(this).val());
+            // })
 
-            $(tr).find("td input[name='pt_usname']").each(function(){
-                pt_usname.push($(this).val());
-            })
+            // $(tr).find("td input[name='pt_usname']").each(function(){
+            //     pt_usname.push($(this).val());
+            // })
 
             var from = $("form[name='submitForm']");
-        
+            $(from).find("input[name='pt_id']").val(pt_id);
             $(from).find("input[name='pt_usid']").val(pt_usid);
             $(from).find("input[name='pt_usname']").val(pt_usname);
             $(from).find("input[name='pt_name']").val(pt_name);
             $(from).find("input[name='pt_date']").val(pt_date);
-            $(from).find("input[name='ac_name']").val(ac_name);
+            $(from).find("input[name='pn_id']").val(pn_id);
+            $(from).find("input[name='pn_acname']").val(pn_acname);
             $(from).find("input[name='ac_type']").val(ac_type);
             $(from).find("input[name='ac_weather']").val(ac_weather);
             $(from).find("input[name='ac_drive']").val(ac_drive);
             $(from).find("input[name='ac_carry']").val(ac_carry);
             $(from).find("input[name='ac_spend']").val(ac_spend);
             $(from).find("input[name='ac_hours']").val(ac_hours);
-            $(from).find("input[name='type']").val(type);  
+            $(from).find("input[name='ac_id']").val(ac_id);  
 
             $(from).submit();
         }else{

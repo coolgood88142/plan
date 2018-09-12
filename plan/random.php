@@ -30,7 +30,7 @@
         }
     </style>
     
-    <form name="showForm" method="post">
+    <form name="showForm" action="<?php echo "select_random.php" ?>"method="post">
         <input type="hidden" name="admin" value="<?=$us_admin?>"/>
         <input type="button" value="活動列表" onClick="show('activity')"/>
         <input type="button" value="行程列表" onClick="show('plan')"/>
@@ -41,6 +41,8 @@
         <br/><br/>
         <H2>隨機行程</H2>
         <br/><br/>
+        <p class="plan">行程名稱:<input type="text" name="plan_name" value=""/></p>
+        <p class="date">出發日期:<input type="text" name="plan_date" value=""/>(yyyy-mm-dd)</p>
 
         天數: <input type="text" name="day" value="" size="2"/>天<br/><br/>
         
@@ -50,7 +52,7 @@
                 $type_id = $value['type_id'];
                 $name = $value['name'];
         ?>
-            <input type="checkbox" name="typeid" value="<?=$type_id?>"><?php echo $name ?></input>
+            <input type="checkbox" name="typeid[]" value="<?=$type_id?>"><?php echo $name ?></input>
         <?php
             }
         ?>
@@ -58,6 +60,7 @@
 
         天數小時:<input type="text" name="day_time" value="" size="2">小時<br/><br/>
 
+        <p class="time">
         時段選項:
             <select name="time_type">
         <?php
@@ -69,12 +72,23 @@
         <?php
             }
         ?>
-            </select>
+            </select></p>
+        <input type="submit" name="gorandom" value="執行"/>  
             <br/><br/> 
-        <input type="button" name="addplans" value="送出" onClick="add_plan()"/>
+        
         <table id="example1">
 	        <thead>
-               
+                <tr>
+                    <td bgcolor="#00FFFF">活動項目</td>
+                    <td bgcolor="#00FFFF">類型</td>
+                    <td bgcolor="#00FFFF">天氣</td>
+                    <td bgcolor="#00FFFF">車程(小時)</td>
+                    <td bgcolor="#00FFFF">攜帶物品</td>
+                    <td bgcolor="#00FFFF">花費</td>
+                    <td bgcolor="#00FFFF">時間(小時)</td>
+                    <td bgcolor="#00FFFF">動作</td>
+                    <td bgcolor="#00FFFF" style="display:none;">類型ID</td>
+                </tr>
 	        </thead>
 	        <tbody>
                 
@@ -82,13 +96,56 @@
             <tfoot>
             </tfoot>
         </table>
+        <input type="button" name="goplan" value="送出" onClick="go_plan()"/> 
+    </form>
+    <form action="random.php" name="submitForm" method="post">
+        <input type="hidden" name="plan_day" />
+        <input type="hidden" name="plan_type" />
+        <input type="hidden" name="plan_typeid" />
+        <input type="hidden" name="plan_daytime" />  
+        <input type="hidden" name="is_random" />  
     </form>
   </body>
   <script language="JavaScript">
     $(document).ready(function() {
         $('#example1').DataTable();
+        $('#example1_wrapper').hide();
+        $("input[name='goplan']").hide();
+        $(".plan").hide();
+        $(".date").hide();
+        $(".time").hide();
+
+        // $('#day_time').on('keyup', function() {
+        //     var time = parseInt((this).val());
+        //     if(time>=8){
+        //         $(".time").show();
+        //     }
+        // });
     } );
 
+    $("input[name='day_time']").on('keyup', function() {
+        var time = parseInt($(this).val());
+        if(time<8){
+            $(".time").show();
+        }else{
+            $(".time").hide();
+        }
+    });
+
+    function go_random(){
+        var day = $("input[name='day']").val();
+        var day_time = $("input[name='day_time']").val();
+        var typeid = "";
+        $("input[name='typeid']").each(function() {
+            if ($(this).attr('checked') ==true) {
+                typeid = typeid + $(this).val() + ",";
+            }
+        });
+        typeid = typeid.substring(0, typeid.length-1);
+
+        var ty_type = $("select[name='time_type'] :selected").val();
+        var ty_name = $("select[name='time_type'] :selected").text();
+    }
 
     function format (ac_name,ac_type,ac_weather,ac_drive,ac_carry,ac_spend,ac_hours,type) {
 

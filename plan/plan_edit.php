@@ -15,14 +15,18 @@
         include("select_plan.php");
         include("select_activity.php"); 
     }
-
+    
+    $pt_id = $_POST['pt_id'];
     $pt_name = $_POST['pt_name'];
     $pt_date = $_POST['pt_date'];
     $pt_usid = $_POST['pt_usid'];
     $pt_usname = $_POST['pt_usname'];
 
-    $ac_name = $_POST['ac_name'];
-    $ac_name = explode(",", $ac_name);
+    $pn_id =  $_POST['pn_id'];
+    $pn_id = explode(",", $pn_id);
+
+    $pn_acname = $_POST['pn_acname'];
+    $pn_acname = explode(",", $pn_acname);
 
     $ac_type = $_POST['ac_type'];
     $ac_type = explode(",", $ac_type);
@@ -42,10 +46,10 @@
     $ac_hours = $_POST['ac_hours'];
     $ac_hours = explode(",", $ac_hours);
 
-    $type = $_POST['type'];
-    $type = explode(",", $type);    
+    $ac_id = $_POST['ac_id'];
+    $ac_id = explode(",", $ac_id);    
 
-    $count=count($ac_name);
+    $count=count($pn_acname);
 
  ?>
   <body>
@@ -86,7 +90,7 @@
                     <td bgcolor="#00FFFF">花費</td>
                     <td bgcolor="#00FFFF">時間(小時)</td>
                     <td bgcolor="#00FFFF">動作</td>
-                    <td bgcolor="#00FFFF" style="display:none;">類型ID</td>
+                    <td bgcolor="#00FFFF" style="display:none;">活動ID</td>
                 </tr>
 	        </thead>
 	        <tbody>
@@ -95,8 +99,8 @@
                     for($i=0 ; $i<$count ; $i++) {
                 ?>
                 <tr>
-                    <td class="ac_name">
-                        <?php echo $ac_name[$i]?>
+                    <td class="pn_acname">
+                        <?php echo $pn_acname[$i]?>
                     </td>
                     <td class="ac_type">
                         <?php echo $ac_type[$i]?>
@@ -119,8 +123,8 @@
                     <td>
                         <input type="checkbox" name="dalete" >刪除</input>
                     </td>
-                    <td class="type" style="display:none;">
-                        <?php echo $type[$i]?>
+                    <td class="pn_id" style="display:none;">
+                        <?php echo $pn_id[$i]?>
                     </td>
                 </tr>
                 <?php 
@@ -190,7 +194,7 @@
         <input type="button" name="goplan" value="送出" onClick="go_plan()"/> 
     </form>
     <form action="update_plan.php" name="submitForm" method="post">
-        <input type="hidden" name="type" />
+        <input type="hidden" name="pn_id" />
         <input type="hidden" name="isdelete" /> 
         <input type="hidden" name="de_acspend" />  
         <input type="hidden" name="de_achours" /> 
@@ -202,10 +206,13 @@
         <input type="hidden" name="ad_accarry" /> 
         <input type="hidden" name="ad_acspend" /> 
         <input type="hidden" name="ad_achours" />
+        <input type="hidden" name="ad_hours" />
         <input type="hidden" name="ad_acid" />
 
-        <input type="hidden" name="pt_name" /> 
-        <input type="hidden" name="pt_date" />
+        <input type="hidden" name="plan_name" /> 
+        <input type="hidden" name="plan_date" />
+        <input type="hidden" name="pt_name" value="<?=$pt_name?>"/> 
+        <input type="hidden" name="pt_date" value="<?=$pt_date?>"/>
         <input type="hidden" name="pt_usid" />
         <input type="hidden" name="pt_usname" />
     </form>
@@ -226,19 +233,15 @@
 
     function go_plan(){
         if($('#example1_wrapper').is(':visible')){
-            var ad_acname="",ad_typename="",ad_acweather="",ad_acdrive="",ad_accarry="",ad_acspend=0,ad_achours=0,ad_acid="",type="",
+            var ad_acname="",ad_typename="",ad_acweather="",ad_acdrive="",ad_accarry="",ad_acspend=0,ad_achours=0,ad_acid="",pn_id="",ad_hours= "",
             de_acspend=0,de_achours=0,isdelete="";
             var from = $("form[name='submitForm']");
-            $("#example1 .type").each(function(){
-                var text = $(this).text().trim();
-                type = type + text + ",";
-            });
-
-            type = type.substring(0, type.length-1);
 
             $("input[name='dalete']:checked").each(function(){
                 var obj = $(this).closest("tr");
                 isdelete = isdelete + "true" + ",";
+
+                pn_id = pn_id + obj.find(".pn_id").text().trim() + ",";
 
                 var spend = obj.find(".ac_spend").text().trim();
                 spend = parseInt(spend.substring(0, spend.length-1));
@@ -250,8 +253,9 @@
             });
 
             isdelete = isdelete.substring(0, isdelete.length-1);
+            pn_id = pn_id.substring(0, pn_id.length-1);
 
-            $(from).find("input[name='type']").val(type);
+            $(from).find("input[name='pn_id']").val(pn_id);
             $(from).find("input[name='isdelete']").val(isdelete);
             $(from).find("input[name='de_acspend']").val(de_acspend);
             $(from).find("input[name='de_achours']").val(de_achours);
@@ -272,6 +276,7 @@
 
                 var hours = parseInt(obj.find(".ac_hours").text().trim());
                 ad_achours = ad_achours + hours;
+                ad_hours = ad_hours + hours + ",";
                 ad_acid = ad_acid + obj.find(".ac_id").text().trim() + ",";
 
                 });
@@ -282,6 +287,7 @@
             ad_acweather = ad_acweather.substring(0, ad_acweather.length-1);
             ad_acdrive = ad_acdrive.substring(0, ad_acdrive.length-1);
             ad_accarry = ad_accarry.substring(0, ad_accarry.length-1);
+            ad_hours = ad_hours.substring(0, ad_hours.length-1);
             ad_acid = ad_acid.substring(0, ad_acid.length-1);
             
 
@@ -292,16 +298,17 @@
             $(from).find("input[name='ad_accarry']").val(ad_accarry);
             $(from).find("input[name='ad_acspend']").val(ad_acspend);
             $(from).find("input[name='ad_achours']").val(ad_achours);
+            $(from).find("input[name='ad_hours']").val(ad_hours);
             $(from).find("input[name='ad_acid']").val(ad_acid);
 
 
-            var pt_name = $("input[name='pt_name']").val();
-            var pt_date = $("input[name='pt_date']").val();
+            var plan_name = $("input[name='pt_name']").val();
+            var plan_date = $("input[name='pt_date']").val();
             var pt_usid = $("input[name='pt_usid']").val();
             var pt_usname = $("input[name='pt_usname']").val();
             
-            $(from).find("input[name='pt_name']").val(pt_name);
-            $(from).find("input[name='pt_date']").val(pt_date);
+            $(from).find("input[name='plan_name']").val(plan_name);
+            $(from).find("input[name='plan_date']").val(plan_date);
             $(from).find("input[name='pt_usid']").val(pt_usid); 
             $(from).find("input[name='pt_usname']").val(pt_usname); 
 

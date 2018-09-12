@@ -2,18 +2,30 @@
     session_start();
     include("mysql.php");
 
-    $pt_name = $_POST['pt_name'];
-    $pt_date = $_POST['pt_date'];
+    $pt_name = "";
+    if(isset($_POST['pt_name'])){
+        $pt_name = $_POST['pt_name'];
+    }
+
+    $pt_date = "";
+    if(isset($_POST['pt_date'])){
+        $pt_date = $_POST['pt_date'];
+    }
+
+    $count = 0;
+    $ac_id = "";
+    if(isset($_POST['ac_id'])){
+        $ac_id = $_POST['ac_id'];
+        $ac_id = explode(",", $ac_id);
+        $count=count($ac_id);
+    }
+
     $pt_usid = $_POST['pt_usid'];
     $pt_usname = $_POST['pt_usname'];
 
-    $type = $_POST['type'];
-    $type = explode(",", $type);
-    $count=count($type); 
-
     if($count>0){
         for($i=0 ; $i<$count ; $i++){
-            $acid = $type[$i];
+            $acid = $ac_id[$i];
             if($acid!="" && $acid!=null){
                 $sql = "UPDATE plan_trip SET pt_name='$pt_name',pt_date = '$pt_date' WHERE pt_usid = $pt_usid and pt_acid = $acid ";
                 $conn->exec($sql);
@@ -21,15 +33,47 @@
         }
     }
 
+    $plan_name = "";
+    if(isset($_POST['plan_name'])){
+        $plan_name = $_POST['plan_name'];
+    }
+
+    $plan_date = "";
+    if(isset($_POST['plan_date'])){
+        $plan_date = $_POST['plan_date'];
+    }
+
+
     $isdelete = $_POST['isdelete'];
     $isdelete = explode(",", $isdelete);
-    $de_acspend = (int)$_POST['de_acspend'];
-    $de_achours = (int)$_POST['de_achours'];
+
+    $pn_id = "";
+    if(isset($_POST['pn_id'])){
+        $pn_id = $_POST['pn_id'];
+        $pn_id = explode(",", $pn_id);
+    }
+
+    $de_acspend = "";
+    if(isset($_POST['de_acspend'])){
+        $de_acspend = (int)$_POST['de_acspend'];
+    }
+
+    $de_achours = "";
+    if(isset($_POST['de_achours'])){
+        $de_achours = (int)$_POST['de_achours'];
+    }
+
+    if(isset($_POST['plan_name']) && isset($_POST['plan_date'])){
+        $sql = "UPDATE plan_trip SET pt_name = '$plan_name',pt_date = '$plan_date' WHERE pt_name = '$pt_name' and pt_date = '$pt_date' and pt_usid = $pt_usid";
+        $conn->exec($sql);
+        $pt_name = $plan_name;
+        $pt_date = $plan_date;
+    }
 
     $count=count($isdelete);
 
     if($count>0){
-        $sql = "SELECT count(*) as count,pt_hours,pt_spend FROM plan_trip WHERE pt_date = '$pt_date' and pt_usid = $pt_usid ";
+        $sql = "SELECT pt_hours,pt_spend FROM plan_trip WHERE pt_name = '$pt_name' and pt_date = '$pt_date' and pt_usid = $pt_usid ";
         $query = $conn->query($sql);
         $user = $query->fetch(PDO::FETCH_ASSOC);
         $spend = (int)$user['pt_spend'];
@@ -47,17 +91,16 @@
             $de_acspend = $spend - $de_acspend;
          }
 
-        $math = $user['count'];
-        if($math>0){
-            $sql = "UPDATE plan_trip SET pt_spend = $de_acspend,pt_hours = $de_achours WHERE pt_date = '$pt_date' and pt_usid = $pt_usid";
+        if($de_achours>0 && $de_acspend>0){
+            $sql = "UPDATE plan_trip SET pt_spend = $de_acspend,pt_hours = $de_achours WHERE pt_name = '$pt_name' and pt_date = '$pt_date' and pt_usid = $pt_usid";
             $conn->exec($sql);
         }
 
         for($i=0 ; $i<$count ; $i++){
             if($isdelete[$i]=="true"){
-                $acid = $type[$i];
-                if($acid!="" && $acid!=null){
-                    $sql = "DELETE FROM plan_trip WHERE pt_usid = $pt_usid and pt_acid = $acid ";
+                $pnid = $pn_id[$i];
+                if($pnid!="" && $pnid!=null){
+                    $sql = "DELETE FROM plan_acname WHERE pn_id = $pnid ";
                     $conn->exec($sql);
                 }
             }
@@ -73,6 +116,8 @@
 
     $us_id = "";
     $us_name = "";
+    $ad_acname = "";
+    $ad_hours = "";
 
     if(isset($_POST['us_id'])){
         $us_id = $_POST['us_id'];
@@ -82,6 +127,20 @@
         $us_name = $_POST['us_name'];
     }
 
+    if(isset($_POST['ad_acname'])){
+        $ad_acname = $_POST['ad_acname'];
+        $ad_acname = explode(",", $ad_acname);
+    }
+
+    if(isset($_POST['ad_hours'])){
+        $ad_hours = $_POST['ad_hours'];
+        $ad_hours = explode(",", $ad_hours);
+    }
+
+    $newplan = "";
+    if(isset($_POST['newplan'])){
+        $newplan = $_POST['newplan'];
+    }
 
     $count=count($ad_acid);
 
@@ -90,7 +149,7 @@
             $pt_usid = $us_id;
             $pt_usname = $us_name;
         }else{
-            $sql = "SELECT count(*) as count,pt_hours,pt_spend FROM plan_trip WHERE pt_date = '$pt_date' and pt_usid = $pt_usid ";
+            $sql = "SELECT pt_hours,pt_spend FROM plan_trip WHERE pt_name = '$pt_name' and pt_date = '$pt_date' and pt_usid = $pt_usid ";
             $query = $conn->query($sql);
             $user = $query->fetch(PDO::FETCH_ASSOC);
             $hour= (int)$user['pt_hours'];
@@ -99,18 +158,31 @@
             $ad_achours = $ad_achours + $hour;
             $ad_acspend = $ad_acspend + $spend;
 
-            $math = $user['count'];
-            if($math>0){
-                $sql = "UPDATE plan_trip SET pt_spend = $ad_acspend,pt_hours = $ad_achours WHERE pt_date = '$pt_date' and pt_usid = $pt_usid";
+            if($ad_acspend>0 && $ad_acspend>0){
+                $sql = "UPDATE plan_trip SET pt_spend = $ad_acspend,pt_hours = $ad_achours WHERE pt_name = '$pt_name' and pt_date = '$plan_date' and pt_usid = $pt_usid";
                 $conn->exec($sql);
             }
         }
 
+        if($newplan!=""){
+            $sql = "INSERT INTO plan_trip (pt_name, pt_hours, pt_spend, pt_date, pt_usid, pt_usname, pt_status)
+            VALUES ('$plan_name', $ad_achours, $ad_acspend, '$plan_date', $pt_usid, '$pt_usname', 1)";
+            $conn->exec($sql);
+        }
+
         for($i=0 ; $i<$count ; $i++){
             $acid = $ad_acid[$i];
-            if($acid!="" && $acid!=null){
-                $sql = "INSERT INTO plan_trip (pt_acid, pt_name, pt_hours, pt_spend, pt_date, pt_usid, pt_usname, pt_status)
-                VALUES ($acid, '$pt_name', $ad_achours, $ad_acspend, '$pt_date', $pt_usid, '$pt_usname', 1)";
+            $acname = $ad_acname[$i];
+            $achours = $ad_hours[$i];
+
+            $sql = "SELECT * FROM plan_trip WHERE pt_name = '$plan_name' and pt_date = '$plan_date' and pt_usid = $pt_usid and pt_status = 1 ";
+            $query = $conn->query($sql);
+            $data = $query->fetch(PDO::FETCH_ASSOC);
+            $pt_id = $data['pt_id'];
+
+            if($acid!="" && $acid!=null && $acname!="" && $acname!=null && $achours!="" && $achours!=null){
+                $sql = "INSERT INTO plan_acname (pn_ptid, pn_acid, pn_acname, pn_achours)
+                VALUES ($pt_id, $acid, '$acname', $achours)";
                 $conn->exec($sql);
             }
         }

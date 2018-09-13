@@ -9,6 +9,7 @@
 <script src="jquery.dataTables.min.js"></script>
 <?php session_start();
     include("mysql.php"); 
+    include("button.php"); 
 
     $us_admin = $_SESSION['us_admin'];
     if(!empty($us_admin)){
@@ -19,9 +20,7 @@
   <body>
     <form name="showForm" method="post">
         <input type="hidden" name="admin" value="<?=$us_admin?>"/>
-        <input type="button" value="活動列表" onClick="show('activity')"/>
-        <input type="button" value="行程列表" onClick="show('plan')"/>
-        <input type="button" value="設定" onClick="show('setting')"/>
+        <?php echo $button_list; ?>
         &nbsp&nbsp
         Hi!<?php echo $_SESSION['us_name'];?>
         <input type="button" value="登出" onClick="show('sign_out')"/>

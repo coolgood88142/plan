@@ -9,6 +9,9 @@
 <script src="jquery.dataTables.min.js"></script>
   <body>
   <?php
+    if(!empty($_COOKIE['us_account'])&& !empty($_COOKIE['us_password'])){
+      echo '<meta http-equiv=REFRESH CONTENT=0;url=sign_in.php>';
+    }
     $error = false;
     $errorMessage = "";
     if(isset($_GET['error'])){
@@ -24,6 +27,8 @@
         帳號: <input type="text" name="us_account" /><br/><br/>
 
         密碼: <input type="password" name="us_password" /><br/><br/>
+
+        <input type="checkbox" name="us_remember" />&nbsp 記住我<br/><br/>
 
 　      <input type="button" value="登入" onClick="sign_in()"/>
         <input type="button" value="建立" onClick="setup()"/>

@@ -60,7 +60,7 @@
 
 
     $usid="";
-    $sql = "SELECT pt_id,pt_name,pt_date,pt_hours,pt_spend,pt_status,pt_usid,pt_usname FROM plan_trip ";
+    $sql = "SELECT pt_id,pt_name,pt_date,pt_hours,pt_spend,pt_status,pt_usid,pt_usname FROM plan_trip ORDER BY pt_date DESC ";
     if($us_admin!='Y'){
         $id = $user['us_id'];
         $usid = " WHERE pt_usid='$id'";

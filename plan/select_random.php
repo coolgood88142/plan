@@ -19,15 +19,24 @@
     }
 
     $time_type = "";
+    $time_count = "";
     if(isset($_POST['typeid'])){
         $time_type = $_POST['typeid'];
+        $time_count = count($time_type);
     }
 
-    echo "time_type: " . var_dump($time_type);
-
     if($day!="" && $typeid!="" && $day_time!="" && $time_type!=""){
-        // $sql = "select * from activity where ac_timetype = " . ;
-
+        $sql = "select * from activity ";
+        if($time_count>0){
+            $sql = $sql . "where ac_type in (";
+            for($i=0;$i<$time_count;$i++){
+                $sql = $sql . "'" . $time_type[$i] . "',";
+            }
+            $sql = substr($sql,0,-1) . ")";
+        }
+        // $plans = $query->fetchAll(PDO::FETCH_ASSOC);
+        // $data = array_rand($plans,2);
+        echo $sql;
     }else{
         $sql = "select * from activity_types";
 

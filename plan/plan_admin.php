@@ -8,7 +8,8 @@
 <link href="jquery.dataTables.min.css" rel="stylesheet" />
 <script src="jquery.dataTables.min.js"></script>
 <?php session_start();
-    include("mysql.php"); 
+    include("mysql.php");
+    include("button.php"); 
 
     $us_admin = $_SESSION['us_admin'];
     if(!empty($us_admin)){
@@ -32,9 +33,7 @@
     
     <form name="showForm" method="post">
         <input type="hidden" name="admin" value="<?=$us_admin?>"/>
-        <input type="button" value="活動列表" onClick="show('activity')"/>
-        <input type="button" value="行程列表" onClick="show('plan')"/>
-        <input type="button" value="設定" onClick="show('setting')"/>
+        <?php echo $button_list; ?>
         &nbsp&nbsp
         Hi!<?php echo $_SESSION['us_name'];?>
         <input type="button" value="登出" onClick="show('sign_out')"/>
@@ -45,7 +44,7 @@
         <input type="button" name="addplan" value="新增行程" onClick="add_plan()"/>
         <p class="plan">行程名稱:<input type="text" name="plan_name" value=""/></p>
         <p class="date">出發日期:<input type="text" name="plan_date" value=""/>(yyyy-mm-dd)</p>      
-        <p class="userlist">使用者名稱:   
+        <p class="userlist">使用者名稱: 
         <select name="pt_userlist">
         <?php 
             foreach($user as $key => $value){
@@ -58,6 +57,8 @@
         ?>
         </select>
         </p>
+        <p class="add_activityText" style="color:red;">請選擇活動項目勾選加入</p>
+        <p class="check_activity" style="color:red;">確認好活動項目請按送出</p>
 
         <input type="hidden" name="pt_usid" value="<?=$pt_usid?>"/>
         <table id="example1">
@@ -220,7 +221,7 @@
     <tfoot>
     </tfoot>
 </table>
-        <input type="button" name="addactivity" value="新增" onClick="add_activity()"/>
+        <input type="button" name="addactivity" value="新增活動項目" onClick="add_activity()"/>
         <input type="button" name="goplan" value="送出" onClick="go_plan()"/>
     </form>
     <form action="update_plan.php" name="updateForm" method="post">
@@ -280,6 +281,8 @@
         $(".userlist").hide();
         $("select[name='pt_userlist']").hide();
         $("input[name='back']").hide();
+        $(".add_activityText").hide();
+        $(".check_activity").hide();
         
         $('#example1').DataTable();
         $('#example1 tbody').on('click', 'td.details-control', function () {
@@ -336,12 +339,15 @@
         $(".userlist").show();
         $("select[name='pt_userlist']").show();
         $("input[name='back']").show();
+        $(".add_activityText").show();
     }
 
     function add_activity(){
         $("input[name='addactivity']").hide();
         $('#example2_wrapper').show();
-        $('#example3_wrapper').hide();      
+        $('#example3_wrapper').hide();     
+        $('.add_activityText').show();
+        $(".check_activity").hide(); 
     }
         function go_plan(){
         $("input[name='addactivity']").show();
@@ -525,6 +531,8 @@
 
             $('#example3_wrapper').show();
             $('#example2_wrapper').hide();
+            $('.add_activityText').hide();
+            $(".check_activity").show();
         }
 
         

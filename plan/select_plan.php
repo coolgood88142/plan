@@ -60,17 +60,15 @@
 
 
     $usid="";
-    $sql = "SELECT pt_id,pt_name,pt_date,pt_hours,pt_spend,pt_status,pt_usid,pt_usname FROM plan_trip ORDER BY pt_date DESC ";
+    $sql = "SELECT pt_id,pt_name,pt_date,pt_hours,pt_spend,pt_status,pt_usid,pt_usname FROM plan_trip ";
     if($us_admin!='Y'){
         $id = $user['us_id'];
         $usid = " WHERE pt_usid='$id'";
     }
 
-    $query = $conn->query($sql.$usid);
+    $sql = $sql.$usid." ORDER BY pt_date DESC ";
+    $query = $conn->query($sql);
     $plan = $query->fetchAll(PDO::FETCH_ASSOC);
-
-    
-    
 
 
     $sql = "SELECT pn_id,pn_ptid,pn_acname,pt_id,pt_usid 

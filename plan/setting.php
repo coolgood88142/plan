@@ -9,7 +9,6 @@
 <script src="jquery.dataTables.min.js"></script>
   <?php session_start();
         include("mysql.php");
-        include("button.php"); 
 
         $us_admin = $_SESSION['us_admin'];
         if(!empty($us_admin)){
@@ -56,11 +55,7 @@
     <form action="<?php echo "update.php" ?>" name="showForm" method="post">
         <input type="hidden" name="admin" value="<?=$us_admin?>"/>
         <input type="hidden" name="add_account" value="<?=$add_account?>"/>
-        <?php echo $button_list; ?>
-        &nbsp&nbsp
-        Hi!<?php echo $_SESSION['us_name'];?>
-        <input type="button" value="登出" onClick="show('sign_out')"/>
-        <br/><br/>
+        <div id="button"></div>
         <H2>設定</H2>
 
         帳號: 
@@ -114,6 +109,7 @@
   </body>
   <script language="JavaScript">
     $(document).ready(function() {
+      $('#button').load('button.php');
       var admin = $("input[name='admin']").val();
       var status = $("input[name='status']").val();
       if(admin=='Y'){

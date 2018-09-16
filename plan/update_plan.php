@@ -20,8 +20,15 @@
         $count=count($ac_id);
     }
 
-    $pt_usid = $_POST['pt_usid'];
-    $pt_usname = $_POST['pt_usname'];
+    $pt_usid = "";
+    if(isset($_POST['pt_usid'])){
+        $pt_usid = $_POST['pt_usid'];
+    }
+
+    $pt_usname = "";
+    if(isset($_POST['pt_usname'])){
+        $pt_usname = $_POST['pt_usname'];
+    }
 
     if($count>0){
         for($i=0 ; $i<$count ; $i++){
@@ -44,8 +51,13 @@
     }
 
 
-    $isdelete = $_POST['isdelete'];
-    $isdelete = explode(",", $isdelete);
+    $isdelete = "";
+    $count = 0;
+    if(isset($_POST['isdelete'])){
+        $isdelete = $_POST['isdelete'];
+        $isdelete = explode(",", $isdelete);
+        $count=count($isdelete);
+    }
 
     $pn_id = "";
     if(isset($_POST['pn_id'])){
@@ -63,14 +75,14 @@
         $de_achours = (int)$_POST['de_achours'];
     }
 
-    if(isset($_POST['plan_name']) && isset($_POST['plan_date'])){
+    if(isset($_POST['plan_name']) && isset($_POST['plan_date']) && $pt_name!="" && $pt_date!="" && $pt_usid!="" ){
         $sql = "UPDATE plan_trip SET pt_name = '$plan_name',pt_date = '$plan_date' WHERE pt_name = '$pt_name' and pt_date = '$pt_date' and pt_usid = $pt_usid";
         $conn->exec($sql);
         $pt_name = $plan_name;
         $pt_date = $plan_date;
     }
 
-    $count=count($isdelete);
+    
 
     if($count>0){
         $sql = "SELECT pt_hours,pt_spend FROM plan_trip WHERE pt_name = '$pt_name' and pt_date = '$pt_date' and pt_usid = $pt_usid ";
@@ -167,6 +179,7 @@
         if($newplan!=""){
             $sql = "INSERT INTO plan_trip (pt_name, pt_hours, pt_spend, pt_date, pt_usid, pt_usname, pt_status)
             VALUES ('$plan_name', $ad_achours, $ad_acspend, '$plan_date', $pt_usid, '$pt_usname', 1)";
+            echo $sql;
             $conn->exec($sql);
         }
 

@@ -9,7 +9,6 @@
 <script src="jquery.dataTables.min.js"></script>
 <?php session_start();
     include("mysql.php");
-    include("button.php"); 
 
     $us_admin = $_SESSION['us_admin'];
     if(!empty($us_admin)){
@@ -33,11 +32,7 @@
     
     <form name="showForm" method="post">
         <input type="hidden" name="admin" value="<?=$us_admin?>"/>
-        <?php echo $button_list; ?>
-        &nbsp&nbsp
-        Hi!<?php echo $_SESSION['us_name'];?>
-        <input type="button" value="登出" onClick="show('sign_out')"/>
-        <br/><br/>
+        <div id="button"></div> 
         <H2>行程列表</H2>  
         <br/><br/>
         <!-- <input type="button" name="back" value="回上一頁" onClick="back_page()"/> -->
@@ -266,6 +261,7 @@
   </body>
   <script language="JavaScript">
     $(document).ready(function() {
+        $('#button').load('button.php');
         $('#example3').DataTable();
         $('#example3_wrapper').hide();
         $('#example2').DataTable();
@@ -830,7 +826,7 @@
     // }
 
     function show(page){
-        if($("input[name='admin']").val()=="Y" && page!="activity" && page!="sign_out"){
+        if($("input[name='admin']").val()=="Y" && page!="activity" && page!="sign_out" && page!="random"){
             page = page + "_admin";
         }
         document.showForm.action=page+".php"; 

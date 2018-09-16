@@ -9,7 +9,6 @@
 <script src="jquery.dataTables.min.js"></script>
 <?php session_start();
     include("mysql.php"); 
-    include("button.php");
 
     $us_admin = $_SESSION['us_admin'];
     if(!empty($us_admin)){
@@ -66,11 +65,7 @@
     
     <form name="showForm" method="post">
         <input type="hidden" name="admin" value="<?=$us_admin?>"/>
-        <?php echo $button_list; ?>
-        &nbsp&nbsp
-        Hi!<?php echo $_SESSION['us_name'];?>
-        <input type="button" value="登出" onClick="show('sign_out')"/>
-        <br/><br/>
+        <div id="button"></div> 
         <H2>行程列表</H2>
         <br/><br/>
         行程名稱:<input type="text" name="pt_name" value="<?=$pt_name?>"/><br/><br/>
@@ -218,6 +213,7 @@
   </body>
   <script language="JavaScript">
     $(document).ready(function() {
+        $('#button').load('button.php');
         $('#example1').DataTable();
         $('#example2').DataTable();
         $('#example2_wrapper').hide();
